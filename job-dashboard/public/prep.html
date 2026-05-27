@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Prepare application</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .prepbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px;
+      }
+      .prep-title {
+        font-weight: 900;
+        font-size: 16px;
+        letter-spacing: 0.1px;
+      }
+      .prep-sub {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .warnbar {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid rgba(217, 119, 6, 0.25);
+        background: rgba(217, 119, 6, 0.08);
+        border-radius: 12px;
+        color: rgba(120, 53, 15, 0.95);
+        font-size: 12px;
+      }
+      @media (max-width: 860px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="title">Prepare application</div>
+        <div class="subtitle">Draft + edit materials for one role</div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="./index.html">Back</a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="card prepbar">
+        <div>
+          <div id="title" class="prep-title">Loading…</div>
+          <div id="sub" class="prep-sub"></div>
+          <div id="warn" class="warnbar" style="display:none;"></div>
+        </div>
+        <div class="toolbar">
+          <button id="btnCopyLink" class="btn primary">Copy link</button>
+          <button id="btnExport" class="btn">Export materials</button>
+          <button id="btnImport" class="btn">Import materials</button>
+        </div>
+      </section>
+
+      <section class="grid2">
+        <div class="card job" style="padding:14px;">
+          <div class="job-title" style="font-size:14px;">Resume (positioning summary)</div>
+          <div class="job-sub" style="margin-top:6px;">Keep a role-specific summary to guide tailoring.</div>
+          <textarea id="resumeSummary" class="textarea small" placeholder="Write / paste a tailored positioning summary here…"></textarea>
+        </div>
+        <div class="card job" style="padding:14px;">
+          <div class="job-title" style="font-size:14px;">Resume (bullet edits)</div>
+          <div class="job-sub" style="margin-top:6px;">5–7 bullets you want to emphasize for this role.</div>
+          <textarea id="resumeBullets" class="textarea small" placeholder="Write / paste bullet edits here…"></textarea>
+        </div>
+        <div class="card job" style="padding:14px;">
+          <div class="job-title" style="font-size:14px;">Cover letter</div>
+          <div class="job-sub" style="margin-top:6px;">Draft + iterate here.</div>
+          <textarea id="coverLetter" class="textarea small" placeholder="Write / paste cover letter here…"></textarea>
+        </div>
+        <div class="card job" style="padding:14px;">
+          <div class="job-title" style="font-size:14px;">Notes</div>
+          <div class="job-sub" style="margin-top:6px;">Your notes, interview prep, recruiter details, etc.</div>
+          <textarea id="notes" class="textarea small" placeholder="Write notes here…"></textarea>
+          <div class="dialog-actions" style="margin-top:10px; justify-content:space-between;">
+            <button id="btnSave" class="btn primary">Save</button>
+            <button id="btnMarkApplied" class="btn">Mark applied</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      window.__JOB_FEED__ = window.__JOB_FEED__ || { generatedAt: "", jobs: [] };
+    </script>
+    <script src="./feed.js"></script>
+    <script src="./prep.js"></script>
+  </body>
+</html>
+

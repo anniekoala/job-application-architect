@@ -1,0 +1,9 @@
+# If you prefer Terminal instead of Finder, run these commands locally:
+
+mkdir -p "/Users/agao/Annie_Obsidian/JOB"
+cp -R "/Users/agao/Documents/New project/job-dashboard" "/Users/agao/Annie_Obsidian/JOB/"
+cp "/Users/agao/Documents/New project/job-search-automation-update.md" "/Users/agao/Annie_Obsidian/JOB/" || true
+
+# Then open:
+# /Users/agao/Annie_Obsidian/JOB/job-dashboard/public/index.html
+

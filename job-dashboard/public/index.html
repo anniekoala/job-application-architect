@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Job Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="title">Job Dashboard</div>
+        <div class="subtitle">Track leads · Mark applied · Search & filter</div>
+      </div>
+      <div class="actions">
+        <button id="btnImport" class="btn">Import</button>
+        <button id="btnExportInbox" class="btn">Export inbox</button>
+        <button id="btnExportAll" class="btn">Export all</button>
+        <button id="btnCopyApplied" class="btn">Copy applied</button>
+        <button id="btnCopyBlocked" class="btn">Copy blocked</button>
+        <button id="btnQuick" class="btn">Add link</button>
+        <button id="btnAdd" class="btn primary">Add job</button>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="controls card">
+        <div class="row">
+          <input id="q" class="input" placeholder="Search company/title/keywords..." />
+          <select id="status" class="select">
+            <option value="">All statuses</option>
+            <option value="needs_review">Needs review</option>
+            <option value="new">New</option>
+            <option value="interested">Interested</option>
+            <option value="applied">Applied</option>
+            <option value="archived">Archived</option>
+          </select>
+          <label class="check">
+            <input id="hideApplied" type="checkbox" checked />
+            Hide applied
+          </label>
+          <label class="check">
+            <input id="usCnOnly" type="checkbox" checked />
+            US/China only
+          </label>
+          <select id="sort" class="select">
+            <option value="fitScore_desc" selected>Sort: fit score (high)</option>
+            <option value="foundDate_desc">Sort: found date (newest)</option>
+            <option value="company_asc">Sort: company (A→Z)</option>
+          </select>
+          <button id="btnRefresh" class="btn">Refresh</button>
+        </div>
+        <div class="meta" id="meta"></div>
+      </section>
+
+      <section id="list" class="list"></section>
+    </main>
+
+    <dialog id="dlgImport" class="dialog">
+      <form method="dialog" class="dialog-inner">
+        <div class="dialog-title">Import jobs (JSON)</div>
+        <p class="hint">
+          Paste a JSON array (or <code>{"jobs":[...]}</code>). Upserts by link, otherwise by company+title. Tip: ask me to
+          evaluate an official job link and I’ll return JSON you can paste here.
+        </p>
+        <textarea id="importText" class="textarea" spellcheck="false"></textarea>
+        <details class="example">
+          <summary>Example JSON</summary>
+          <pre><code>[
+  {
+    "company": "Airbnb",
+    "title": "Product Operations Lead (Fraud & Safety Investigations)",
+    "location": "US (Remote Eligible)",
+    "link": "https://careers.airbnb.com/positions/...",
+    "synopsis": "3–5 lines summary from official description",
+    "rationale": "Why it fits Annie Gao",
+    "compensation": "$X–$Y (if shown)",
+    "verification": "Official page loads and shows Apply Now",
+    "foundDate": "2026-05-18",
+    "postedDate": "",
+    "fitScore": 9.5,
+    "concerns": "Any concerns",
+    "keywords": ["trust & safety","escalation","SQL"]
+  }
+]</code></pre>
+        </details>
+        <div class="dialog-actions">
+          <button class="btn">Cancel</button>
+          <button id="btnDoImport" class="btn primary" value="default">Import</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="dlgQuick" class="dialog">
+      <form method="dialog" class="dialog-inner" id="quickForm">
+        <div class="dialog-title">Add from link (Inbox)</div>
+        <p class="hint">For roles you find elsewhere: paste the official job link, add any notes, save as <code>needs_review</code>.</p>
+        <div class="grid">
+          <label class="label span2">Official link<input id="qLink" class="input" placeholder="https://..." required /></label>
+          <label class="label">Company (optional)<input id="qCompany" class="input" /></label>
+          <label class="label">Title (optional)<input id="qTitle" class="input" /></label>
+          <label class="label span2">Your notes<textarea id="qNotes" class="textarea small" placeholder="Why it looks interesting, location constraints, etc."></textarea></label>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn">Cancel</button>
+          <button id="btnDoQuick" class="btn primary" value="default">Add to inbox</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="dlgAdd" class="dialog">
+      <form method="dialog" class="dialog-inner" id="addForm">
+        <div class="dialog-title">Add job</div>
+        <div class="grid">
+          <label class="label">Company<input id="fCompany" class="input" required /></label>
+          <label class="label">Title<input id="fTitle" class="input" required /></label>
+          <label class="label">Location<input id="fLocation" class="input" /></label>
+          <label class="label">Link<input id="fLink" class="input" /></label>
+          <label class="label">Found date<input id="fFound" class="input" placeholder="YYYY-MM-DD" /></label>
+          <label class="label">Fit score<input id="fFit" class="input" placeholder="1-10" /></label>
+          <label class="label">Compensation<input id="fComp" class="input" /></label>
+          <label class="label span2">Verification<input id="fVerif" class="input" /></label>
+          <label class="label span2">Synopsis<textarea id="fSyn" class="textarea small"></textarea></label>
+          <label class="label span2">Why it fits<textarea id="fWhy" class="textarea small"></textarea></label>
+          <label class="label span2">Concerns<textarea id="fConc" class="textarea small"></textarea></label>
+          <label class="label span2">Keywords (comma separated)<input id="fKeys" class="input" /></label>
+        </div>
+        <div class="dialog-actions">
+          <button class="btn">Cancel</button>
+          <button id="btnDoAdd" class="btn primary" value="default">Add</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      // Default empty feed so the dashboard works even before the first automation run.
+      window.__JOB_FEED__ = window.__JOB_FEED__ || { generatedAt: "", jobs: [] };
+
+      // Cache-bust feed/app for file:// browsers (Safari/Chrome sometimes cache local scripts).
+      (function () {
+        var v = Date.now();
+        var feed = document.createElement("script");
+        feed.src = "./feed.js?v=" + v;
+        feed.onload = function () {
+          var app = document.createElement("script");
+          app.src = "./app.js?v=" + v;
+          document.body.appendChild(app);
+        };
+        feed.onerror = function () {
+          var app = document.createElement("script");
+          app.src = "./app.js?v=" + v;
+          document.body.appendChild(app);
+        };
+        document.body.appendChild(feed);
+      })();
+    </script>
+  </body>
+</html>

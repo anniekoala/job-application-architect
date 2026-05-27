@@ -1,0 +1,5 @@
+# One official job URL per line.
+# Any role whose official link matches a line here should be excluded from daily recommendations/feed.
+#
+# Use the dashboard "Block" button, then "Copy blocked", and paste here to persist across runs.
+

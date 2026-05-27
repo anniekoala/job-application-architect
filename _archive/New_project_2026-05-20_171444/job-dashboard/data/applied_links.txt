@@ -1,0 +1,5 @@
+# One official job URL per line.
+# Paste from the dashboard's "Copy applied" button.
+#
+# The daily automation should read this file and exclude already-applied roles from recommendations/feed.
+

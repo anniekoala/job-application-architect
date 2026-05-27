@@ -1,0 +1,27 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Logs and scratch files
+*.log
+scratch/
+**/scratch/
+
+# IDE / Editor folders
+.vscode/
+.idea/
+.obsidian/workspace
+.obsidian/workspace.json
+
+# Private credentials and profiles
+my_private_profile.json
+my_private_profile*.json
+private_profile.json
+
+# Generated outputs (contains tailored resumes & cover letters)
+outputs/
+**/outputs/

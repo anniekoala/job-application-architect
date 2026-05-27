@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Investment Strategy Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Dashboard navigation">
+        <div class="brand">
+          <span class="brand-mark">IG</span>
+          <div>
+            <h1>Investment Dashboard</h1>
+            <p>Loaded statement view</p>
+          </div>
+        </div>
+        <nav>
+          <a href="#overview">Overview</a>
+          <a href="#performance">Performance</a>
+          <a href="#analysis">Analysis</a>
+          <a href="#equity">RSU / ESPP</a>
+          <a href="#insurance">Insurance</a>
+        </nav>
+        <div class="sidebar-note">
+          <strong>Scope</strong>
+          <span>Fidelity, NetBenefits 401(k), Robinhood, Schwab, Nationwide, Amex Savings, Chase Checking, RSU/ESPP files currently loaded.</span>
+        </div>
+      </aside>
+
+      <main>
+        <section class="page-head" id="overview">
+          <div class="hero-copy">
+            <p class="eyebrow">Portfolio health</p>
+            <div class="hero-value-row">
+              <div>
+                <span class="hero-label">Tracked investments</span>
+                <h2 id="heroTotal">$0</h2>
+              </div>
+              <div class="hero-change positive">
+                <span>Current vs Mar</span>
+                <strong id="heroChange">+$0</strong>
+              </div>
+            </div>
+            <p class="hero-subtitle">Current loaded snapshot; trend chart uses accounts with enough monthly history</p>
+          </div>
+          <div class="hero-chart-wrap">
+            <svg id="stackedAreaChart" viewBox="0 0 760 280" role="img" aria-label="Portfolio composition over time"></svg>
+            <div class="hero-meta">
+              <span>Dec 2025</span>
+              <strong>Current snapshot · latest available statements</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="stacked-legend-row-wrap">
+          <div class="stacked-legend" id="stackedLegend"></div>
+        </section>
+
+        <section class="panel-grid single">
+          <article class="panel">
+            <div class="panel-head">
+              <h3>Account Type Distribution</h3>
+              <p>What kind of account the money sits in</p>
+            </div>
+            <div class="channel-layout">
+              <div class="channel-donut" id="channelDonut"></div>
+              <div class="channel-list" id="channelChart"></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="dashboard-section" id="performance">
+          <div class="section-head">
+            <h2>Performance</h2>
+            <p>Current holdings, recent returns, and portfolio overlap</p>
+          </div>
+
+          <section class="panel-grid single holdings-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>Stocks</h3>
+                <p>Value and recent performance</p>
+              </div>
+              <div class="holding-list" id="stockList"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <h3>ETFs / Mutual Funds</h3>
+                <p>Value and recent performance</p>
+              </div>
+              <div class="holding-list" id="fundList"></div>
+            </article>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h3>ETF / Fund Coverage And Overlap</h3>
+              <p>Strategy-level overlap based on the holdings loaded</p>
+            </div>
+            <div class="overlap-grid" id="overlapSignals"></div>
+            <div class="fund-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fund / ETF</th>
+                    <th>Coverage</th>
+                    <th>Value</th>
+                    <th>%</th>
+                    <th>Overlap note</th>
+                  </tr>
+                </thead>
+                <tbody id="fundRows"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="dashboard-section" id="analysis">
+          <div class="section-head">
+            <h2>Analysis</h2>
+            <p>Decision support based on loaded holdings, recent returns, and policy data</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Holdings And Action Analysis</h3>
+              <p>Open each row for the reason, risk level, and next action</p>
+            </div>
+            <div class="analysis-legend">
+              <span class="urgent">Action now: reduce or define a rule</span>
+              <span class="watch">Watch closely: review before rebalance</span>
+              <span class="cleanup">Cleanup: simplify or consolidate</span>
+              <span class="healthy">Healthy / hold: good trend, no buy signal</span>
+              <span class="setup">Setup: data needed</span>
+            </div>
+            <div class="analysis-card-grid" id="holdingsScorecard"></div>
+          </section>
+        </section>
+
+        <section class="panel" id="equity">
+          <div class="panel-head">
+            <h3>Company Equity: RSU / ESPP</h3>
+            <p>What compensation turned into tax, shares, and current holdings</p>
+          </div>
+          <div class="equity-analysis-grid">
+            <article class="equity-analysis-card">
+              <div class="mini-head">
+                <h4>RSU Compensation Flow</h4>
+                <span>Through Feb 20, 2026</span>
+              </div>
+              <div class="equity-flow-metrics">
+                <div><span>Gross shares vested</span><strong>6,497</strong></div>
+                <div><span>Shares withheld for tax</span><strong>2,992</strong></div>
+                <div><span>Net shares delivered</span><strong>3,505</strong></div>
+                <div><span>Tax withheld</span><strong>$155,253</strong></div>
+              </div>
+              <div class="equity-split-bar" aria-label="RSU split between tax withholding and net shares">
+                <span class="net" style="width:53.9%"></span>
+                <span class="tax" style="width:46.1%"></span>
+              </div>
+              <div class="equity-split-key">
+                <span class="net">53.9% kept</span>
+                <span class="tax">46.1% withheld for tax</span>
+              </div>
+              <div class="equity-event-list" id="rsuEventList"></div>
+            </article>
+
+            <article class="equity-analysis-card">
+              <div class="mini-head">
+                <h4>ESPP Purchase Flow</h4>
+                <span>Purchase records loaded</span>
+              </div>
+              <div class="equity-flow-metrics">
+                <div><span>Shares purchased</span><strong>2,748</strong></div>
+                <div><span>Purchase-date discount value</span><strong>$72,663</strong></div>
+                <div><span>Latest purchase</span><strong>200 shares</strong></div>
+                <div><span>Tax at purchase</span><strong>Not withheld</strong></div>
+              </div>
+              <div class="equity-event-list" id="esppEventList"></div>
+              <p class="equity-note">
+                Current Schwab holdings confirm 3,505 RBLX shares worth $193,686, but the loaded statements do not reliably split how many remaining shares came from RSU vs ESPP.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="dashboard-section" id="insurance">
+          <div class="section-head">
+            <h2>Insurance</h2>
+            <p>Nationwide Indexed Universal Life deep dive</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Policy Snapshot</h3>
+              <p>Latest annual statement · Mar 17, 2026</p>
+            </div>
+            <div class="insurance-metrics">
+              <article>
+                <span>Gross premiums paid</span>
+                <strong>$44,000</strong>
+              </article>
+              <article>
+                <span>Accumulated value</span>
+                <strong>$36,207</strong>
+              </article>
+              <article>
+                <span>Net surrender value</span>
+                <strong>$19,407</strong>
+                <small>After current surrender charge of $16,800</small>
+              </article>
+            </div>
+            <div class="insurance-secondary-grid">
+              <article>
+                <span>Money already deducted</span>
+                <strong>$8,141</strong>
+                <small>Premium charges $3,080 · monthly deductions $5,057 · other charges $4</small>
+              </article>
+              <article>
+                <span>Current surrender charge</span>
+                <strong>$16,800</strong>
+                <small>Explains why $36,207 accumulated value becomes $19,407 if surrendered today</small>
+              </article>
+            </div>
+          </section>
+
+          <!--
+          <section class="panel-grid two insurance-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>Money That Has Left The Policy</h3>
+                <p>Costs already deducted</p>
+              </div>
+              <div class="insurance-list">
+                <div>
+                  <span>Premium charges</span>
+                  <strong>$3,080</strong>
+                </div>
+                <div>
+                  <span>Monthly deductions</span>
+                  <strong>$5,057</strong>
+                </div>
+                <div>
+                  <span>Other charges</span>
+                  <strong>$4</strong>
+                </div>
+                <div class="total">
+                  <span>Total already deducted</span>
+                  <strong>$8,141</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <h3>Exit Cost</h3>
+                <p>Not yet lost unless you surrender</p>
+              </div>
+              <div class="insurance-callout">
+                <span>Surrender charge</span>
+                <strong>$16,800</strong>
+                <p>Accumulated value is $36,207, but net surrender value is only $19,407 today.</p>
+              </div>
+            </article>
+          </section>
+          -->
+
+          <section class="panel">
+            <div class="panel-head">
+              <h3>Investment Allocation</h3>
+              <p>Allocation share, crediting rate, and statement-year credits</p>
+            </div>
+            <div class="insurance-strategies" id="insuranceStrategies"></div>
+          </section>
+
+          <section class="panel-grid two insurance-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>Return Summary</h3>
+                <p>Current policy performance</p>
+              </div>
+              <div class="insurance-list">
+                <div>
+                  <span>Interest / credits this statement year</span>
+                  <strong>$210</strong>
+                </div>
+                <div>
+                  <span>Weighted indexed crediting rate</span>
+                  <strong>0.30%</strong>
+                </div>
+                <div>
+                  <span>Total weighted crediting rate</span>
+                  <strong>1.54%</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <h3>Value Lens</h3>
+                <p>How far the policy stands from money paid in</p>
+              </div>
+              <div class="insurance-list">
+                <div>
+                  <span>Vs gross premiums paid</span>
+                  <strong>-$7,793</strong>
+                </div>
+                <div>
+                  <span>Vs net premiums invested</span>
+                  <strong>-$4,713</strong>
+                </div>
+                <div>
+                  <span>Vs gross premiums if surrendered today</span>
+                  <strong>-$24,593</strong>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="panel insurance-value-panel">
+            <div class="panel-head">
+              <h3>Policy Value vs Cash Value</h3>
+              <p>Accumulated value compared with net surrender value</p>
+            </div>
+            <div class="insurance-value-layout">
+              <svg
+                id="insuranceValueChart"
+                viewBox="0 0 640 260"
+                role="img"
+                aria-label="Accumulated policy value compared with net surrender value over time"
+              ></svg>
+              <div class="insurance-value-legend">
+                <div>
+                  <span class="swatch accumulated"></span>
+                  <b>Accumulated value</b>
+                  <strong>$36,207</strong>
+                </div>
+                <div>
+                  <span class="swatch surrender"></span>
+                  <b>Net surrender value</b>
+                  <strong>$19,407</strong>
+                </div>
+                <p>
+                  The gap is mostly the current surrender charge. This makes the policy look very different
+                  depending on whether you view it as an in-force contract or as cash available today.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h3>IUL Option Monitor</h3>
+              <p>Monthly review list for allocation and crediting behavior</p>
+            </div>
+            <div class="iul-monitor-grid" id="iulMonitor"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="./data/market-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
